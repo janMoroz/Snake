@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Snake</title>
+  
+</head>
+<body>
+  <canvas id="canvas" width="400" height="400"></canvas>
+  <script src="https://code.jquery.com/jquery-2.1.0.js"></script>
+
+ <script>
+let canvas = document.getElementById('canvas')
+let ctx = canvas.getContext('2d')
+let width = canvas.width
+let height = canvas.height
+let blockSize = 10
+let widhtInBlock = width / blockSize
+let heightInBlock = height / blockSize
+let score = 0
+let drawBorder = function () {
+  ctx.fillStyle = 'Grey'
+  ctx.fillRect(0, 0, width, blockSize)
+  ctx.fillRect(0, height - blockSize, width, blockSize)
+  ctx.fillRect(0, 0, blockSize, height)
+  ctx.fillRect(width - blockSize, 0, blockSize, height)
+}
+
+/*ctx.textBaseLine = 'top'
+ctx.font = '20px Courier'
+ctx.fillText('Courier', 50, 50)
+
+ctx.font = '24px Comic Sans MS'
+ctx.fillText('Comic Sans MS', 50, 100)
+
+ctx.font = '10px Arial'
+ctx.fillText('Arial', 50, 150)*/
+
+let drawScore = function() {
+  ctx.font = '20px Courier'
+  ctx.fillStyle = 'Red'
+  ctx.textAlign = 'left'
+  ctx.textBaseLine = 'top'
+  ctx.fillText('Score: ' + score, 10, 25)
+}
+let gameOver = function(){
+  clearInterval(intervalId)
+  ctx.font = '60px Courier'
+  ctx.fillStyle = 'Red'
+  ctx.textAlign = 'center'
+  ctx.textBaseLine = 'middle'
+  ctx.fillText('Game over!', width / 2, height / 2)
+}
+drawBorder()
+drawScore()
+gameOver()
+
+</script>
+</body>
+</html>

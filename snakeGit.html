@@ -53,9 +53,32 @@ let gameOver = function(){
   ctx.textBaseLine = 'middle'
   ctx.fillText('Game over!', width / 2, height / 2)
 }
-drawBorder()
+/*drawBorder()
 drawScore()
 gameOver()
+setInterval( function() {
+  ctx.clearRect(0, 0, width, height);
+  drawBorder();
+  drawScore();
+   score++ },
+1000
+)*/
+let Block = function(col, row){
+  this.col = col
+  this.row = row
+}
+//let sampleBlock = new Block (5, 5)
+
+Block.prototype.drawSquare = function(color){
+  let x = this.col * blockSize;
+  let y = this.row * blockSize;
+  ctx.fillStyle = color;
+  ctx.fillRect(x, y, blockSize, blockSize)
+}
+let sampleBlock = new Block (3,4)
+sampleBlock.drawSquare('light Blue')
+drawBorder()
+
 
 </script>
 </body>

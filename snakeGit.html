@@ -78,8 +78,42 @@ Block.prototype.drawSquare = function(color){
 let sampleBlock = new Block (3,4)
 sampleBlock.drawSquare('light Blue')
 drawBorder()
-
-
+let circle = function(){
+  ctx.beginPath()
+  ctx.arc(100,110, blockSize, 0, Math.PI *2, true);
+  ctx.stroke()
+}
+Block.prototype.drawCircle = function(color){
+  let centerX = this.col * blockSize + blockSize / 2;
+  let centerY = this.row * blockSize + blockSize / 2;
+  ctx.fillStyle = color;
+  circle(centerX, centerY, blockSize / 2, true)
+}
+let sampleCircle = new Block(4, 3)
+sampleCircle.drawCircle('Light Green')
+Block.prototype.equal = function(otherBlock){
+  return this.col === otherBlock.col && this.row === otherBlock.row;
+}
+let apple = new Block(2, 5)
+let head = new Block(3, 5)
+head = new Block(2, 5)
+console.log(head.equal(apple))
+let Snake = function() {
+  this.segments = [
+    new Block(7, 5),
+    new Block(6, 5),
+    new Block(5, 5)
+  ]
+  this.direction = 'right'
+  this.nextDirection = 'right'
+}
+Snake.prototype.draw = function(){
+  for(let i = 0; i < this.segments.length; i++ ){
+    this.segments[i].drawSquare('Blue')
+  }
+}
+let snake = new Snake()
+snake.draw()
 </script>
 </body>
 </html>

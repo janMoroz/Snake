@@ -8,7 +8,7 @@
   
 </head>
 <body>
-  <canvas id="canvas" width="400" height="400"></canvas>
+  <canvas id="canvas" width="500" height="500"></canvas>
   <script src="https://code.jquery.com/jquery-2.1.0.js"></script>
 
  <script>
@@ -18,9 +18,9 @@ let ctx = canvas.getContext('2d')
 let width = canvas.width
 let height = canvas.height
 
-let blockSize = 10
-let widhtInBlocks = width / blockSize
-let heightInBlocks = height / blockSize
+let blockSize = 10;
+let widthInBlocks = width / blockSize;
+let heightInBlocks = height / blockSize;
 
 let score = 0
 
@@ -44,19 +44,19 @@ ctx.fillText('Arial', 50, 150)*/
 
 let drawScore = function() {
   ctx.font = '20px Courier'
-  ctx.fillStyle = 'Red'
-  ctx.textAlign = 'left'
-  ctx.textBaseLine = 'top'
-  ctx.fillText('Score: ' + score, 10, 25)
+  ctx.fillStyle = 'Black';
+  ctx.textAlign = 'left';
+  ctx.textBaseLine = 'top';
+  ctx.fillText('Score:' + score, 15, 25)
 }
 
 let gameOver = function(){
-  
-  ctx.font = '60px Courier'
-  ctx.fillStyle = 'Red'
-  ctx.textAlign = 'center'
-  ctx.textBaseLine = 'middle'
-  ctx.fillText('Game over!', width / 2, height / 2)
+  playing = false
+  ctx.font = '60px Courier';
+  ctx.fillStyle = 'Red';
+  ctx.textAlign = 'center';
+  ctx.textBaseLine = 'middle';
+  ctx.fillText('Game over!', width / 2, height / 2);
 }
 /*drawBorder()
 drawScore()
@@ -70,7 +70,7 @@ setInterval( function() {
 )*/
 let circle = function(x, y, radius, fillCircle){
   ctx.beginPath();
-  ctx.arc(x,y, radius, Math.PI * 2, false)
+  ctx.arc(x,y, radius, Math.PI * 2, false);
   if(fillCircle){
     ctx.fill()
   } else{ ctx.stroke()}
@@ -81,6 +81,12 @@ let Block = function(col, row){
   this.row = row;
 }
 //let sampleBlock = new Block (5, 5)
+Block.prototype.drawCircle = function(color){
+  let centerX = this.col * blockSize + blockSize / 2;
+  let centerY = this.row * blockSize + blockSize / 2;
+  ctx.fillStyle = color;
+  circle(centerX, centerY, blockSize / 2, true)
+}
 
 Block.prototype.drawSquare = function(color){
   let x = this.col * blockSize;
@@ -94,21 +100,11 @@ sampleBlock.drawSquare('light Blue')*/
 /*let circle = function(){
   ctx.beginPath()
   ctx.arc(100,110, blockSize, 0, Math.PI *2, true);
-  ctx.stroke()
-}*/
-Block.prototype.drawCircle = function(color){
-  let centerX = this.col * blockSize + blockSize / 2;
-  let centerY = this.row * blockSize + blockSize / 2;
-  ctx.fillStyle = color;
-  circle(centerX, centerY, blockSize / 2, true)
-}
-  
-
-  
+  ctx.stroke()}*/
 //let sampleCircle = new Block(4, 3)
 //sampleCircle.drawCircle('Light Green')
 Block.prototype.equal = function(otherBlock){
-  return this.col === otherBlock.col && this.row === otherBlock.row;
+  return this.col === otherBlock.col && this.row === otherBlock.row
 }
 /*let apple = new Block(2, 5)
 let head = new Block(3, 5)
@@ -124,13 +120,18 @@ let Snake = function() {
   this.nextDirection = 'right'
 }
 Snake.prototype.draw = function(){
-  for(let i = 0; i < this.segments.length; i++ ){
-    this.segments[i].drawSquare('Blue')
+  this.segments[0].drawSquare('Purple')
+  let isEvenSegment = false
+
+  for(let i = 1; i < this.segments.length; i++ ){
+    if(isEvenSegment){
+      this.segments[i].drawSquare('Black')
+    } else{
+      this.segments[i].drawSquare('Red')
+    }
+    isEvenSegment = !isEvenSegment;
   }
 }
-//let snake = new Snake()
-//snake.draw()
-
 Snake.prototype.move = function(){
   let head  = this.segments[0];
   let newHead;
@@ -152,7 +153,8 @@ Snake.prototype.move = function(){
 this.segments.unshift(newHead);
   if(newHead.equal(apple.position)) {
     score++; 
-    apple.move();  
+    animationTime -= 5;
+    apple.move(this.segments);  
   } else{
     this.segments.pop();
   }
@@ -160,7 +162,7 @@ this.segments.unshift(newHead);
 Snake.prototype.checkCollision = function(head){
   let leftCollision = (head.col === 0);
   let topCollision = (head.row === 0);
-  let rightCollision = (head.col === widhtInBlocks - 1);
+  let rightCollision = (head.col === widthInBlocks - 1);
   let bottomCollision = (head.row === heightInBlocks -1);
   
   let wallCollision = leftCollision || topCollision || rightCollision || bottomCollision;
@@ -191,24 +193,47 @@ let Apple = function(){
 Apple.prototype.draw = function(){
   this.position.drawCircle('Green')
 }
-/*let apple = new Apple()
-apple.draw()*/
-Apple.prototype.move = function(){
+
+Apple.prototype.move = function(occupiedBlocks){
   let randomCol = Math.floor(Math.random() * (widhtInBlocks - 2)) + 1;
   let randomRow = Math.floor(Math.random() * (heightInBlocks - 2)) + 1;
   this.position = new Block(randomCol, randomRow)
+  let index = occupiedBlocks.length - 1;
+  while( index >= 0 ){
+    if(this.position.equal(occupiedBlocks[index])){
+      this.move(occupiedBlocks);
+      return;
+    }
+    index--;
+  }
 }
-let apple = new Apple()
+
 let snake = new Snake()
+let apple = new Apple()
 
+let playing = true
+let animationTime = 100
 
-let interValid = setInterval(function(){
-  ctx.clearRect(0, 0, width, height)
+let gameLoop = function(){
+  ctx.clearRect(0, 0, width, height);
   drawScore();
   snake.move();
+  snake.draw()
   apple.draw();
-  drawBorder()
-}, 100)
+  drawBorder();
+  if(playing) {
+    setTimeout(gameLoop, animationTime)
+  }
+}
+gameLoop()
+/*let interValId = setInterval(function(){
+  ctx.clearRect(0, 0, width, height);
+  drawScore();
+  snake.move();
+  snake.draw()
+  apple.draw();
+  drawBorder();
+}, 100)*/
 let directions = {
   37: 'left',
   38: 'up',
@@ -216,13 +241,12 @@ let directions = {
   40: 'down'
 }
 $('body').keydown(function(event){
-  let newDirection = direction[event.keyCode]
+  let newDirection = directions[event.keyCode];
   if (newDirection !== undefined){
     snake.setDirection(newDirection)
   }
 })
-//snake.move()
-//snake.draw()
+
 
 </script>
 </body>

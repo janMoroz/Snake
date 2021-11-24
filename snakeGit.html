@@ -195,11 +195,12 @@ Apple.prototype.draw = function(){
 }
 
 Apple.prototype.move = function(occupiedBlocks){
-  let randomCol = Math.floor(Math.random() * (widhtInBlocks - 2)) + 1;
+  let randomCol = Math.floor(Math.random() * (widthInBlocks - 2)) + 1;
   let randomRow = Math.floor(Math.random() * (heightInBlocks - 2)) + 1;
   this.position = new Block(randomCol, randomRow)
+  
   let index = occupiedBlocks.length - 1;
-  while( index >= 0 ){
+  while( index >= 0 ) {
     if(this.position.equal(occupiedBlocks[index])){
       this.move(occupiedBlocks);
       return;
